@@ -16,12 +16,10 @@ const Login = () => {
   };
 
   return (
-    <div className="relative flex flex-col items-center justify-center min-h-screen bg-cover bg-center p-6"
-      style={{ backgroundImage: "url('/login-background.jpg')" }} // ✅ Background Image
+    <div 
+      className="relative flex flex-col items-center justify-center min-h-screen p-6"
+      style={{ background: "linear-gradient(to bottom right, #fddede, #ffb6b9)" }} // ✅ Peach-Pink Background
     >
-      {/* ✅ Background Overlay for Readability */}
-      <div className="absolute inset-0 bg-black bg-opacity-30 backdrop-blur-sm -z-10"></div> 
-
       {/* ✅ Login Card (Fixed Navigation Bar Issue) */}
       <div className="relative flex bg-white bg-opacity-90 rounded-2xl shadow-2xl overflow-hidden w-full max-w-4xl z-10">
         
