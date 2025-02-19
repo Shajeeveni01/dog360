@@ -3,12 +3,14 @@ import { storage } from "../firebase";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import Header from "../components/Header";  
+import Footer from "../components/Footer"; 
 
 const Upload = () => {
   const [image, setImage] = useState(null);
   const [preview, setPreview] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [progress, setProgress] = useState(0); // Track upload progress
+  const [progress, setProgress] = useState(0);
 
   // Handle image selection
   const handleImageChange = (e) => {
@@ -33,7 +35,6 @@ const Upload = () => {
     uploadTask.on(
       "state_changed",
       (snapshot) => {
-        // Calculate and update upload progress
         const progressPercent = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
         setProgress(progressPercent);
       },
@@ -47,41 +48,57 @@ const Upload = () => {
         console.log("Download URL:", downloadURL);
         setImage(null);
         setPreview(null);
-        setProgress(0); // Reset progress bar
+        setProgress(0);
         setLoading(false);
       }
     );
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 p-6">
-      <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
-        <h2 className="text-2xl font-semibold text-gray-700 mb-4 text-center">Upload Dog Skin Image</h2>
+    <div
+      className="relative flex flex-col items-center justify-center min-h-screen bg-cover bg-center p-6"
+      style={{ backgroundImage: "url('/dog-upload-bg.jpg')" }} // ✅ Set background image
+    >
+      {/* Background Overlay for a Subtle Effect */}
+      <div className="absolute inset-0 bg-black bg-opacity-40 backdrop-blur-md"></div>
+
+      {/* Upload Container */}
+      <div className="relative bg-white bg-opacity-80 p-8 rounded-2xl shadow-2xl w-full max-w-lg backdrop-blur-lg">
+        <h2 className="text-3xl font-bold text-gray-700 mb-4 text-center">📸 Upload Dog Skin Image</h2>
+        <p className="text-gray-500 text-center mb-4">Upload an image of your dog's skin to analyze potential conditions.</p>
 
         {/* Image Preview */}
         {preview && (
-          <img src={preview} alt="Preview" className="mb-4 w-full h-48 object-cover rounded-md" />
+          <div className="relative mb-4">
+            <img src={preview} alt="Preview" className="w-full h-56 object-cover rounded-lg border border-gray-300 shadow-md" />
+            <button 
+              onClick={() => { setPreview(null); setImage(null); }}
+              className="absolute top-2 right-2 bg-red-500 text-white px-2 py-1 rounded-full text-sm"
+            >
+              ✕
+            </button>
+          </div>
         )}
 
         {/* File Input */}
-        <input
-          type="file"
-          accept="image/*"
-          className="block w-full text-gray-700 border border-gray-300 rounded-md cursor-pointer p-2 mb-4"
-          onChange={handleImageChange}
-        />
+        <label className="w-full bg-gray-100 border border-gray-300 text-gray-700 py-2 px-4 rounded-lg cursor-pointer text-center hover:bg-gray-200 transition block">
+          Select Image
+          <input type="file" accept="image/*" className="hidden" onChange={handleImageChange} />
+        </label>
 
         {/* Progress Bar */}
         {progress > 0 && (
-          <div className="w-full bg-gray-200 rounded-md h-2 mt-2">
-            <div className="bg-blue-500 h-2 rounded-md" style={{ width: `${progress}%` }}></div>
+          <div className="w-full bg-gray-200 rounded-md h-2 mt-4">
+            <div className="bg-blue-500 h-2 rounded-md transition-all duration-300 ease-in-out" style={{ width: `${progress}%` }}></div>
           </div>
         )}
 
         {/* Upload Button */}
         <button
           onClick={handleUpload}
-          className="w-full bg-blue-500 text-white py-2 rounded-md font-semibold hover:bg-blue-600 transition duration-200"
+          className={`w-full py-3 rounded-lg font-semibold transition duration-300 text-white mt-4 ${
+            loading ? "bg-gray-400 cursor-not-allowed" : "bg-blue-500 hover:bg-blue-600"
+          }`}
           disabled={loading}
         >
           {loading ? "Uploading..." : "Upload Image"}
